@@ -21,7 +21,7 @@ function SubcategoryMenu({ category, isOpen, position }: { category: Category, i
       <div className='w-60 text-black rounded-md overflow-hidden border shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] -translate-x-0.5 -translate-y-0.5' style={{ backgroundColor }}>
         <div>
           {category.subcategories.map((subcategory: Category) => (
-            <Link key={subcategory.slug} href={"#"} className='w-full text-left p-4 hover:bg-black hover:text-white flex justify-between items-center underline font-medium'>
+            <Link key={subcategory.slug} href={`/${category.slug}/${subcategory.slug}`} className='w-full text-left p-4 hover:bg-black hover:text-white flex justify-between items-center underline font-medium'>
               {subcategory.name}
             </Link>
           ))}

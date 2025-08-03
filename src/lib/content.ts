@@ -1,3 +1,4 @@
+import { Category } from '$/multitenant-ecommerce-cms/src/payload-types';
 import * as qs from 'qs-esm';
 
 export class ContentFetcher {
@@ -14,7 +15,7 @@ export class ContentFetcher {
     return await response.json();
   }
 
-  async fetchCategories() {
+  async fetchCategories(): Promise<Array<Omit<Category, 'subcategories'> & {subcategories: string[] | Category[]}>> {
     return this.fetch("categories", qs.stringify({
       where: {
         parent: {
@@ -22,7 +23,9 @@ export class ContentFetcher {
         },
         depth: 1,
         pagination: false
-      }
+      },
+      depth: 1,
+      sort: 'name',
     }));
   }
 }
