@@ -2,7 +2,7 @@
 
 import { Poppins } from "next/font/google"
 import Link from "next/link"
-import { ReactNode, useState } from "react"
+import { type ReactNode, useEffect, useState } from "react"
 import { usePathname } from "next/navigation";
 import { MenuIcon } from "lucide-react";
 
@@ -46,7 +46,7 @@ export function Navbar() {
           <Link href={"/sign-in"}>
             Login
           </Link>
-          </Button>
+        </Button>
         <Button asChild className="border-l border-t-0 border-b-0 border-r-0 px-12 h-full bg-black text-white hover:bg-pink-400 hover:text-black rounded-none transition-colors text-lg">
           <Link href={"/sign-up"}>
             Start Selling
