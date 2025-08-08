@@ -1,11 +1,14 @@
-import { CognitoIdentityProviderClient, ConfirmSignUpCommand, InitiateAuthCommand, SignUpCommand } from "@aws-sdk/client-cognito-identity-provider"
+import { CognitoIdentityProviderClient, ConfirmSignUpCommand, InitiateAuthCommand, ResendConfirmationCodeCommand, SignUpCommand } from "@aws-sdk/client-cognito-identity-provider"
 import { useMutation } from "@tanstack/react-query"
 import Cookies from 'js-cookie';
 import { toast } from "sonner";
 
 import { cognitoConfig } from "@/lib/config"
+import { useRouter } from "next/navigation";
 
 export const useLoginMutation = () => {
+  const router = useRouter();
+
   return useMutation({
     mutationFn: async ({ username, password }: { username: string, password: string }) => {
       const client = new CognitoIdentityProviderClient(cognitoConfig);
@@ -22,10 +25,11 @@ export const useLoginMutation = () => {
     },
     onSuccess: (response) => {
       toast.success("Logged In", { id: 'log-in' });
-      const expiry = response.AuthenticationResult?.ExpiresIn!;
-      Cookies.set('AccessToken', response.AuthenticationResult?.AccessToken!, { expiry: (expiry / 3600) / 24 });
-      Cookies.set("IdToken", response.AuthenticationResult?.IdToken!, { expiry: (expiry / 3600) / 24 });
-      Cookies.set("RefreshToken", response.AuthenticationResult?.RefreshToken!, { expiry: (expiry / 3600) / 24 });
+      var inOneHour = new Date(new Date().getTime() + (response.AuthenticationResult?.ExpiresIn ?? 3600) * 1000);
+      Cookies.set('AccessToken', response.AuthenticationResult?.AccessToken!, { expires: inOneHour });
+      Cookies.set("IdToken", response.AuthenticationResult?.IdToken!, { expires: inOneHour });
+      Cookies.set("RefreshToken", response.AuthenticationResult?.RefreshToken!, { expires: inOneHour });
+      router.push("/");
     },
     onError: () => {
       toast.error("Login Failed", { id: 'log-in' });
@@ -74,6 +78,25 @@ export const useVerifyAccountMutation = () => {
     },
     onError: () => {
       toast.error("Failed to verify account", { id: 'verify' });
+    }
+  })
+}
+
+export const useResendOtpMutation = () => {
+  return useMutation({
+    mutationFn: async ({ username }: { username: string }) => {
+      const client = new CognitoIdentityProviderClient(cognitoConfig);
+      const command = new ResendConfirmationCodeCommand({
+        ClientId: process.env.NEXT_PUBLIC_CLIENT_ID,
+        Username: username
+      });
+      return await client.send(command);
+    },
+    onSuccess: () => {
+      toast.success("Resent Otp");
+    },
+    onError: () => {
+      toast.error("Failed to send Otp");
     }
   })
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { ListFilterIcon, SearchIcon } from 'lucide-react'
+import { BookmarkCheckIcon, ListFilterIcon, SearchIcon } from 'lucide-react'
 import { useState } from 'react';
 
 import { Category } from '$/multitenant-ecommerce-cms/src/payload-types'
@@ -8,9 +8,13 @@ import { Category } from '$/multitenant-ecommerce-cms/src/payload-types'
 import { Input } from '@/components/ui/input'
 import { CategoriesSiedbar } from '@/components/search-filters/categories-sidebar'
 import { Button } from '@/components/ui/button';
+import { useUser } from '@/lib/tanstack-query/queries/use-user';
+import Link from 'next/link';
 
 function SearchInput({ disabled = false, data }: { disabled?: boolean, data: Category[] }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  const { data: user } = useUser();
 
   return (
     <div className='flex items-center gap-2 w-full'>
@@ -22,7 +26,14 @@ function SearchInput({ disabled = false, data }: { disabled?: boolean, data: Cat
       <Button variant={'elevated'} className='size-12 shrink-0 flex lg:hidden' onClick={() => setIsSidebarOpen(true)}>
         <ListFilterIcon />
       </Button>
-      {/* Todo: Add Categories Library button */}
+      {user ? (
+        <Button asChild variant={'elevated'}>
+          <Link href={"/library"}>
+            <BookmarkCheckIcon className='mr-2' />
+            Library
+          </Link>
+        </Button>
+      ) : null}
     </div>
   )
 }

@@ -6,10 +6,11 @@ import { useForm } from "react-hook-form";
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 
 import { verifyAccountSchema } from "@/lib/schemas/auth";
 import { cn } from "@/lib/utils";
-import { useVerifyAccountMutation } from "@/lib/tanstack-query/mutations/use-auth";
+import { useResendOtpMutation, useVerifyAccountMutation } from "@/lib/tanstack-query/mutations/use-auth";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
@@ -37,6 +38,19 @@ function SignUpPage() {
   });
 
   const verifyAccountMutation = useVerifyAccountMutation();
+  const resendOtpMutation = useResendOtpMutation();
+
+  const [resendCooldown, setResendCooldown] = useState(60);
+
+  useEffect(() => {
+    if (resendCooldown <= 0) return;
+
+    const timer = setInterval(() => {
+      setResendCooldown(prev => prev - 1);
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [resendCooldown]);
 
   if (!username || !email) {
     router.push("/sign-in");
@@ -45,6 +59,10 @@ function SignUpPage() {
   const onSubmit = (values: z.infer<typeof verifyAccountSchema>) => {
     verifyAccountMutation.mutate(values, { onSuccess: () => router.push("/sign-in") });
   };
+
+  const onResendOtp = () => {
+    resendOtpMutation.mutate({ username: username! }, { onSuccess: () => setResendCooldown(60) });
+  }
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-5">
@@ -88,7 +106,16 @@ function SignUpPage() {
                     </InputOTPGroup>
                   </InputOTP>
                 </FormControl>
-                <FormDescription className="text-sm">Enter the OTP sent to your email {email}</FormDescription>
+                <FormDescription className="w-full flex flex-row items-start justify-between">
+                  <p className="text-sm">
+                    Enter the OTP sent to your email <strong>{email}</strong>
+                  </p>
+                  {resendCooldown > 0 ? (
+                    <p>You need to wait <strong>{resendCooldown} seconds</strong> to resend confirmation code</p>
+                  ) : (
+                    <p onClick={onResendOtp} className="underline cursor-pointer"><strong>Resend code</strong></p>
+                  )}
+                </FormDescription>
                 <FormMessage />
               </FormItem>
             )} />
