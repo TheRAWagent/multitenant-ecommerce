@@ -6,9 +6,9 @@ import Link from 'next/link';
 import { Category } from '$/multitenant-ecommerce-cms/src/payload-types'
 
 import { cn } from '@/lib/utils'
-import { useDropdownPosition } from '@/components/search-filters/use-dropdown-position';
+import { useDropdownPosition } from '@/modules/home/components/ui/search-filters/use-dropdown-position';
 import { Button } from '@/components/ui/button'
-import { SubcategoryMenu } from '@/components/search-filters/subcategory-menu';
+import { SubcategoryMenu } from '@/modules/home/components/ui/search-filters/subcategory-menu';
 
 function CategoryDropdown({ category, isActive, isNavigationHovered }: { category: Category, isActive?: boolean, isNavigationHovered?: boolean }) {
   const [isOpen, setIsOpen] = useState(false);

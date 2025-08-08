@@ -9,7 +9,7 @@ import { MenuIcon } from "lucide-react";
 import { cn } from "@/lib/utils"
 
 import { Button } from "@/components/ui/button"
-import { NavbarSidebar } from "@/components/navbar-sidebar";
+import { NavbarSidebar } from "@/modules/home/components/ui/navbar-sidebar";
 import { useUser } from "@/lib/tanstack-query/queries/use-user";
 
 const poppins = Poppins({

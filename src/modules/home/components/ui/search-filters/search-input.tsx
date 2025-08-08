@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { Category } from '$/multitenant-ecommerce-cms/src/payload-types'
 
 import { Input } from '@/components/ui/input'
-import { CategoriesSiedbar } from '@/components/search-filters/categories-sidebar'
+import { CategoriesSiedbar } from '@/modules/home/components/ui/search-filters/categories-sidebar'
 import { Button } from '@/components/ui/button';
 import { useUser } from '@/lib/tanstack-query/queries/use-user';
 import Link from 'next/link';

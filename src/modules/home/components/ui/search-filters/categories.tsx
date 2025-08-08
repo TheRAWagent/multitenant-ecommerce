@@ -6,11 +6,14 @@ import { ListFilterIcon } from 'lucide-react';
 import { Category } from '$/multitenant-ecommerce-cms/src/payload-types'
 
 import { cn } from '@/lib/utils';
-import { CategoryDropdown } from '@/components/search-filters/category-dropdown'
+import { CategoryDropdown } from '@/modules/home/components/ui/search-filters/category-dropdown'
 import { Button } from '@/components/ui/button';
-import { CategoriesSiedbar } from '@/components/search-filters/categories-sidebar';
+import { CategoriesSiedbar } from '@/modules/home/components/ui/search-filters/categories-sidebar';
+import { useParams } from 'next/navigation';
 
 function Categories({ data }: { data: any }) {
+  const params = useParams();
+
   const containerRef = useRef<HTMLDivElement>(null);
   const measureRef = useRef<HTMLDivElement>(null);
   const viewAllRef = useRef<HTMLDivElement>(null);
@@ -19,7 +22,8 @@ function Categories({ data }: { data: any }) {
   const [isAnyHovered, setIsAnyHovered] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  const activeCategory = "all";
+  const categoryParam = params.category as string | undefined;
+  const activeCategory = categoryParam || "all";
   const activeCategoryIndex = data.findIndex((category: Category) => category.slug === activeCategory);
   const isActiveCategoryHidden = activeCategoryIndex > visibleCount && activeCategoryIndex !== -1;
 
